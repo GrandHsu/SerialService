@@ -1,16 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PythonApplication1", "PythonApplication1\PythonApplication1.pyproj", "{56E86F19-0236-45ED-B46F-552457C2DAE5}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C7396302-3C7B-4D6C-9C92-B205BB31EDE7}"
-	ProjectSection(SolutionItems) = preProject
-		PythonApplication1\cal.py = PythonApplication1\cal.py
-		PythonApplication1\log.txt = PythonApplication1\log.txt
-		printOnScreen.py = printOnScreen.py
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

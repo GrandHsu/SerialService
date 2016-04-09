@@ -22,10 +22,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="cal - Copy.py" />
+    <Compile Include="CommunicationProtocol.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="myserial_test.py" />
-    <Compile Include="printOnScreen.py" />
-    <Compile Include="PythonApplication1.py" />
+    <Compile Include="serialService.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
