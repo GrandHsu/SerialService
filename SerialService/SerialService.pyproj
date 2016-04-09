@@ -6,7 +6,7 @@
     <ProjectGuid>56e86f19-0236-45ed-b46f-552457c2dae5</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>myserial_test.py</StartupFile>
+    <StartupFile>CommunicationProtocol.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

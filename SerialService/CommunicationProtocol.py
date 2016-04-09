@@ -16,9 +16,9 @@ class CommunicationProtocol(object):
             split = CommunicationProtocol.charSplit(d)
             da[2 * i] = split[0]
             da[2 * i + 1] = split[1]
-        check = CommunicationProtocol.frameCheck(da)
+        check = CommunicationProtocol.frameCheckSum(da)
         frame = "{0}{1}{2}{3}{4}{5}".format(FRAME_HEAD,chr(addr), chr(cmd), "".join(da), "".join(CommunicationProtocol.charSplit(check)), FRAME_TAIL)
-        print frame
+        return frame
     
     @staticmethod
     def charSplit(char):
@@ -26,11 +26,21 @@ class CommunicationProtocol(object):
         return '{0}{1}'.format(hex(c / 16)[2:].upper(), hex(c % 16)[2:].upper())
 
     @staticmethod
-    def frameCheck(data):
+    def frameCheckSum(data):
         check = 0
         for d in data:
             check = check + ord(d)
         return chr(check % 256)
 
+    @staticmethod
+    def frameCheck(frame):
+        if FRAME_HEAD != frame[0:3]:
+            print "[frameCheck] fail : head not match!"
+            return
+        
+
+
 if __name__ == '__main__':
-    CommunicationProtocol.frameMake(1, 2, "111111111111")
+    frame = CommunicationProtocol.frameMake(1, 2, "111111111111")
+    print frame
+    CommunicationProtocol.frameCheck(frame)
