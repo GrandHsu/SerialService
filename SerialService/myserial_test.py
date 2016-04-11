@@ -51,7 +51,7 @@ class keyLintener(threading.Thread):
             elif key == "s":
                 if self.file is None:
                     self.fileStatus = False
-                    self.file = open("{0}.txt".format(time.strftime('%m %d %H %M %S', time.localtime(time.time()))), 'a')
+                    self.file = open("data/{0}.txt".format(time.strftime('%m %d %H %M %S', time.localtime(time.time()))), 'a')
                 else:
                     print "Saving data now... Press c to stop saving"
             elif key == "c":
