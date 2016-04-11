@@ -10,10 +10,58 @@ import serial.tools.list_ports
 import CommunicationProtocol as cp
 
 class SerialService(object):
-    def __init__(self):
-        pass
+    def __init__(self, port=None, baudrate=115200):
+        if port is not None:
+            _serial_port = port
+        else:
+            try:
+                _serial_port = self.list_serial_ports()
+            except IOError, e:
+                raise e
+            except SystemExit, e:
+                raise e
+
+        _serial_baudrate = baudrate
+        _serial = open_serial(_serial_port, _serial_baudrate)
+        
+    def open_serial(self, port, baudrate):
+        try:
+            print "Trying to open serial port: {0} @ {1} bps...".format(_serial_port, _serial_baudrate)
+            _serial = serial.Serial(port, baudrate)
+            print "[-o-]Listening [{0}]".format(_serial_port)
+            return _serial
+        except serial.SerialException, e:
+            print "[)_(] Cannot open serial port {0}, exit...".format(_serial_port)
+
+    @staticmethod
+    def list_serial_ports():
+        ports = list(serial.tools.list_ports.comports())
+        if len(ports) <= 0:
+            # print "[)_(] No serial ports found, exit now..."
+            raise IOError("No serial ports found.")
+        else:
+            print "Serial ports :"
+            for i, port in enumerate(ports):
+                print "\t({0}). {1}".format(i + 1, port)
+            choose = None
+            while True:
+                key = raw_input("\nChoose [1-n or (q)uit]: ")
+                if key is 'q':
+                    choose = 'quit'
+                    break
+                else:
+                    p = int(key) - 1
+                    if p > len(ports):
+                        print "Out of range, try again"
+                    else:
+                        choose = p
+                        break
+            if choose is 'quit':
+                raise SystemExit("Quitting...")
+            else:
+                port = str(ports[p])
+                return (port.split(' '))[0]
+
 
 if __name__ == "__main__":
-    frame = cp.frameMake(1, 2, "This is rsy!")
-    print frame
-    print cp.frameCheck(frame)
+    serialService = SerialService()

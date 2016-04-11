@@ -13,15 +13,15 @@ FRAME_FRAMELENGTH = 8 + FRAME_DATALENGTH * 2
 @data   - 数据
 @return - 帧字符串
 '''
-def frameMake(addr, cmd, data):
+def frame_make(addr, cmd, data):
     da = ['0' for _ in range(24)]
     for i, d in enumerate(data):
-        split = charSplit(d)
+        split = char_split(d)
         da[2 * i] = split[0]
         da[2 * i + 1] = split[1]
     da = [chr(addr), chr(cmd)] + da
-    check = frameCheckSum(da)
-    frame = "{0}{1}{2}{3}".format(FRAME_HEAD, "".join(da), "".join(charSplit(check)), FRAME_TAIL)
+    check = frame_check_sum(da)
+    frame = "{0}{1}{2}{3}".format(FRAME_HEAD, "".join(da), "".join(char_split(check)), FRAME_TAIL)
     return frame
     
 '''
@@ -29,7 +29,7 @@ def frameMake(addr, cmd, data):
 @char     - 一个字节
 @return   - 拆分后的两个字节
 '''
-def charSplit(char):
+def char_split(char):
     c = ord(char)
     return '{0}{1}'.format(hex(c / 16)[2:].upper(), hex(c % 16)[2:].upper())
 
@@ -39,7 +39,7 @@ def charSplit(char):
 @charL    - 低字节
 @return   - 组合后的两个字节
 '''
-def charCombine(charH, charL):
+def char_combine(charH, charL):
     return chr(int('{0}{1}'.format(charH, charL), base=16))
 
 '''
@@ -47,7 +47,7 @@ def charCombine(charH, charL):
 @data   - 数据
 @return - 校验和值
 '''
-def frameCheckSum(data):
+def frame_check_sum(data):
     check = 0
     for d in data:
         check = check + ord(d)
@@ -58,7 +58,7 @@ def frameCheckSum(data):
 @frame  - 数据帧
 @return - 返回 地址，指令，数据
 '''
-def frameCheck(frame):
+def frame_check(frame):
     ''' e 错误输出 '''
     e = "[frameCheck] fail: "
 
@@ -75,19 +75,19 @@ def frameCheck(frame):
         print e + "tail not match!"
         return
     ''' 校验数据 '''
-    if not charCombine(frame[-3], frame[-2]) == frameCheckSum(frame[3:-3]):
+    if not char_combine(frame[-3], frame[-2]) == frame_check_sum(frame[3:-3]):
         print e + "data check not correct!"
         return
         
     addr = ord(frame[3])
     cmd  = ord(frame[4])
     da = frame[5:-3]
-    data = [charCombine(da[2 * i], da[2 * i + 1]) for i in range(len(da)/2)]
+    data = [char_combine(da[2 * i], da[2 * i + 1]) for i in range(len(da)/2)]
         
     return addr, cmd, data
 
 
 if __name__ == '__main__':
-    frame = frameMake(1, 2, "This is rsy!")
+    frame = frame_make(1, 2, "This is rsy!")
     print frame
-    print frameCheck(frame)
+    print frame_check(frame)
