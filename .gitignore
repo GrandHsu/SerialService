@@ -245,4 +245,9 @@ ModelManifest.xml
 .fake/
 
 # Data files - @rsy
+# [dirs]
+data/
+
+# [files]
 *.txt
+*.pyc
