@@ -4,7 +4,11 @@
 
 用于电源项目和磁场项目的通信部分
 
-由于使用LabView编写串口服务较为繁琐，效率貌似不怎么高，所以考虑用python语言来运行串口驱动，并提供接口给LabView调用，简化LabView编写过程
+由于使用 LabView 编写串口服务较为繁琐，效率貌似不怎么高。所以考虑用 python 来运行串口驱动，并提供接口给 LabView 调用，同时将通信与界面显示分开，简化 LabView 界面程序编写过程。
+
+目前想通过 Socket 与 LabView 进行同步通信。
+
+先开启串口服务，再运行 LabView，同步之后，进行界面操作。
 
 ### 运行环境
 
@@ -14,6 +18,12 @@ Windows 10, python 2.7, (LabView 2015)
 
 * python 2.7
 * pyserial
+
+### 目前状态
+
+- [x]   通信协议		`CommunicationProtocol.py`
+- [x]   串口服务		`SerialService.py`
+- [ ]   Socket服务	
 
 ### 我
 
