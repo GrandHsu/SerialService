@@ -52,7 +52,7 @@ class SerialService(object):
             #    break
         self._serial.timeout = timeout
         frame = self._serial.read_until(cp.FRAME_TAIL)
-        return cp.  (frame)
+        return cp.frame_check(frame)
 
     @staticmethod
     def list_serial_ports():
@@ -103,5 +103,4 @@ class SerialService(object):
 
 if __name__ == "__main__":
     serialService = SerialService('COM1')
-
     serialService.communicate(1, 2, "This is rsy!", 5)
