@@ -65,26 +65,26 @@ def frame_check(frame):
     ''' 检查帧长 '''
     if len(frame) is not FRAME_FRAMELENGTH:
         print e + "length not match!"
-        return
+        return False, "E.LENGTH"
     ''' 检查帧头 '''
     if not frame.startswith(FRAME_HEAD):
         print e + "head not match!"
-        return
+        return False, "E.HEAD"
     ''' 检查帧尾 '''
     if not frame.endswith(FRAME_TAIL):
         print e + "tail not match!"
-        return
+        return False, "E.TAIL"
     ''' 校验数据 '''
     if not char_combine(frame[-3], frame[-2]) == frame_check_sum(frame[3:-3]):
         print e + "data check not correct!"
-        return
+        return False, "E.CHECK"
         
     addr = ord(frame[3])
     cmd  = ord(frame[4])
     da = frame[5:-3]
     data = [char_combine(da[2 * i], da[2 * i + 1]) for i in range(len(da)/2)]
         
-    return addr, cmd, data
+    return True, (addr, cmd, data)
 
 
 if __name__ == '__main__':
