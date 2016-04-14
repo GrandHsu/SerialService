@@ -1,9 +1,7 @@
 # -*- coding:utf-8 -*-
 
 import os
-import threading
 import time
-import signal
 
 import serial
 import serial.tools.list_ports
