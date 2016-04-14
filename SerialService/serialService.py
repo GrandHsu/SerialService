@@ -42,6 +42,7 @@ class SerialService(object):
         ''' 发送帧\n @addr\t- 地址\n @cmd\t- 指令\n @data\t- 数据\n '''
         frame = cp.frame_make(addr, cmd, data)
         self._serial.write(frame)
+        return frame
 
     def read(self, timeout=0.1):
         ''' 读取帧\n @timeout\t- 超时时间 '''
