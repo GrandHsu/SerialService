@@ -118,6 +118,7 @@ def voltageOutput(data, file):
 
 
 def showPorts():
+    ''' 列举当前系统能检测到的串口号 '''
     ports = list(serial.tools.list_ports.comports())
     if len(ports) <= 0:
         print "No serial ports, exit..."

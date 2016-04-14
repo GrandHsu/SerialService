@@ -26,6 +26,7 @@ class SerialService(object):
         self._serial = self.open_serial(self._serial_port, self._serial_baudrate)
 
     def open_serial(self, port, baudrate):
+        ''' 打开串口 '''
         try:
             print "Trying to open serial port: {0} @ {1} bps...".format(port, baudrate)
             _serial = serial.Serial(port, baudrate)
@@ -33,6 +34,7 @@ class SerialService(object):
             return _serial
         except serial.SerialException, e:
             print "[)_(] Cannot open serial port {0}, exit...".format(port)
+            raise SystemExit("Quitting...")
 
     def close_serial(self):
         self._serial.close()
@@ -42,20 +44,17 @@ class SerialService(object):
         self._serial.write(frame)
 
     def read(self, timeout=0.1):
-        # frame = self._serial.read(cp.FRAME_FRAMELENGTH)
-        # frame = ""
-        # while True:
-            #char = self._serial.read()
-            ## frame.join(char)
-            #frame += char
-            #if char is cp.FRAME_TAIL:
-            #    break
+        # 设置超时
         self._serial.timeout = timeout
         frame = self._serial.read_until(cp.FRAME_TAIL)
-        return cp.frame_check(frame)
+        if len(frame) is 0:
+            return False, "TIMEOUT"
+        else:
+            return cp.frame_check(frame)
 
     @staticmethod
     def list_serial_ports():
+        ''' 列举当前系统能检测到的串口号 '''
         ports = list(serial.tools.list_ports.comports())
         if len(ports) <= 0:
             raise IOError("No serial ports found.")
@@ -97,10 +96,17 @@ class SerialService(object):
     #         return None
 
     def communicate(self, addr, cmd, data, timeout=0.1):
+        '''
+        通信过程：
+        主机 -> 从机 frame
+        从机 处理 frame
+        从机 -> 主机 ack_frame 【有超时处理和错误处理】、【重发】（超时重发 & 出错重发）
+        主机 处理 ack
+        '''
         self.write(addr, cmd, data)
-        print self.read(timeout)
+        return self.read(timeout)
 
 
 if __name__ == "__main__":
     serialService = SerialService('COM1')
-    serialService.communicate(1, 2, "This is rsy!", 5)
+    print serialService.communicate(1, 2, "This is rsy!", 5)
