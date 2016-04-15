@@ -23,8 +23,8 @@ Windows 10, python 2.7, (LabView 2015)
 ### 目前状态
 
 - [x]   通信协议		`CommunicationProtocol.py`
-- [ ]   串口服务		`SerialService.py`
-- [ ]   Socket服务	
+- [x]   串口服务		`SerialService.py`
+- [ ]   Socket服务	`SocketService.py`
 
 ### 我
 
