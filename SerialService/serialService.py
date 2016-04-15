@@ -51,10 +51,10 @@ class SerialService(object):
         # 读取到帧尾字节
         frame = self._serial.read_until(cp.FRAME_TAIL)
         if len(frame) is 0:
-            return False, "TIMEOUT"
+            # 返回原始帧，用以监控
+            return False, "TIMEOUT", frame
         else:
-            # 返回原始帧内容，用以监控
-            return cp.frame_check(frame), frame
+            return cp.frame_check(frame)
 
     @staticmethod
     def list_serial_ports():
