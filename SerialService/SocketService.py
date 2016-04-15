@@ -11,66 +11,97 @@ import traceback
 import serialService
 
 class SocketService(object):
+
+    # 不能直接绑定 localhost, 否则别的机器不能访问本机
+    localhost = '192.168.0.119'
+    datalength = 1024
+    comm_port = 15051
+    monitor_port = 15052
+
+    communication = None
+    monitor = None
+    
     def __init__(self, serial):
-        self.localhost = 'localhost'
-        self.datalength = 1024
         self.serial = serial
-        self.communication = None
-        self.monitor = None
+
+    def start(self):
+        self.monitor()
+        self.communicate()
+        # 正常退出 或 出现异常
+        
+        # self.monitor.close()
+        # self.communication.close()
 
     def communicate(self):
         tag = '[communicate]'
-        communication = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        communication.bind((self.localhost, 15051))
-        communication.listen(1)
+        c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        c.bind((self.localhost, self.comm_port))
+        c.listen(1)
         try:
-            comm = None
             while True:
                 print tag, "accepting..."
-                comm, address = communication.accept()
-                #receive_from_socket = comm.recv(self.datalength)
-                ## 检查客户端是否正确
-                #if not receive_from_socket.endswith('hello comm!'):
-                #    print TAG, "Error", "unidentified client, close connection..."
-                #    comm.close()
-                #    continue
-                ## 开始通信
+                self.communication, address = c.accept()
+                receive_from_socket = self.communication.recv(self.datalength)
+                # 检查客户端是否正确
+                if not receive_from_socket.endswith('hello comm!'):
+                    print TAG, "Error", "unidentified client, close connection..."
+                    communication.close()
+                    continue
+                # 开始通信
                 print tag, "communication client, let's do it"
-
                 while True:
-                    receive_from_socket = comm.recv(self.datalength)
+                    receive_from_socket = self.communication.recv(self.datalength)
+                    # print tag, 'log', receive_from_socket
+                    # client 断开了
+                    if len(receive_from_socket) is 0:
+                        print tag, "connection lost..."
+                        self.communication.close()
+                        break
+                    
                     decode = json.loads(receive_from_socket)
+                    # print tag, 'log', decode
 
-                    print self.serial.write(decode["addr"], decode["cmd"], decode["data"])
+                    frame = self.serial.write(decode["addr"], decode["cmd"], decode["data"])
+                    print tag, "send ->", frame
 
-                    print "receive from serial..."
-                    receive_from_serial = self.serial.read(2)
+                    success, data, frame = self.serial.read(0.5)
+                    if success is False:
+                        print tag, "-> recv", "Error", data
+                        print tag, "abandon this frame & continue..."
+                        encode = {"error": data}
+                        self.communication.send(json.dumps(encode) + "\r\n")
+                    else:
+                        print tag, "recv", frame
+                        encode = {"addr": data[0], "cmd": data[1], "data": "".join(data[2]), "error": "NONE"}
+                        self.communication.send(json.dumps(encode) + "\r\n")
 
-                    print receive_from_serial
-
-                    if receive_from_serial[0] is False:
-                        print tag, "Error", receive_from_serial[1], "abandon this frame & continue..."
-                        continue
-
-                    data = receive_from_serial[1]
-                    encode = {"addr": data[0], "cmd": data[1], "data": "".join(data[2])}
-
-                    send_to_socket = json.dumps(encode)
-                    comm.send(send_to_socket)
-
-                comm.close()
+                self.communication.close()
         except Exception, e:
             traceback.print_exc()
             print e
         finally:
-            communication.close()
+            c.close()
 
     def monitor(self):
-        pass
+        tag = '[monitor]'
+        print tag, "init monitor thread..."
+        
+        m = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        m.bind((self.localhost, self.monitor_port))
+        m.listen(1)
+
+        def get():
+            self.monitor, address = m.accept()
+            print tag, "get one connection"
+            return self.monitor
+        
+        t = threading.Thread(target=get)
+        t.setDaemon(True)
+        t.start()
 
 
 if __name__ == "__main__":
     serial_socket = serialService.SerialService('COM3')
     socketService = SocketService(serial_socket)
-    socketService.communicate()
+    socketService.start()
     
