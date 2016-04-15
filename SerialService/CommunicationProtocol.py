@@ -59,7 +59,8 @@ def frame_check(frame):
         return False, "E.CHECK"
     addr, cmd, da = ord(frame[3]), ord(frame[4]), frame[5:-3]
     data = [char_combine(da[2 * i], da[2 * i + 1]) for i in range(len(da)/2)]
-    return True, (addr, cmd, data)
+    # 返回原始帧，用以监控
+    return True, (addr, cmd, data), frame
 
 
 if __name__ == '__main__':
