@@ -21,11 +21,13 @@ def frame_make(addr, cmd, data):
 def char_split(char):
     ''' 二字节拆分\t- 拆分\n @char\t\t\t- 一个字节\n @return\t\t- 拆分后的两个字节 '''
     c = ord(char)
-    return '{0}{1}'.format(hex(c / 16)[2:].upper(), hex(c % 16)[2:].upper())
+    # 交换高低字节
+    return '{0}{1}'.format(hex(c % 16)[2:].upper(), hex(c / 16)[2:].upper())
 
 def char_combine(charH, charL):
     ''' 二字节拆分\t- 组合\n @charH\t\t- 高字节\n @charL\t\t\t- 低字节\n @return\t\t- 组合后的两个字节\n '''
-    return chr(int('{0}{1}'.format(charH, charL), base=16))
+    # 交换高低字节
+    return chr(int('{0}{1}'.format(charL, charH), base=16))
 
 def frame_check_sum(data):
     ''' 计算校验和\n @data\t\t- 数据\n @return\t- 校验和值 '''
