@@ -4,6 +4,7 @@ import os
 import socket
 
 import json
+import traceback
 
 import serialService
 
@@ -27,23 +28,40 @@ class SocketService(object):
             while True:
                 print TAG, "accepting..."
                 comm, address = communication.accept()
-                r = comm.recv(self.datalength)
-                # 检查客户端是否正确
-                if not r.endswith('hello comm!'):
-                    print TAG, "Error", "unidentified client, close connection..."
-                    comm.close()
-                    continue
-                # 开始通信
+                #receive_from_socket = comm.recv(self.datalength)
+                ## 检查客户端是否正确
+                #if not receive_from_socket.endswith('hello comm!'):
+                #    print TAG, "Error", "unidentified client, close connection..."
+                #    comm.close()
+                #    continue
+                ## 开始通信
                 print TAG, "communication client, let's do it"
 
-                r = comm.recv(self.datalength)
-                decode = json.loads(r)
+                while True:
+                    receive_from_socket = comm.recv(self.datalength)
+                    decode = json.loads(receive_from_socket)
 
-                self.serial.write(decode["addr"], decode["cmd"], decode["data"])
+                    print self.serial.write(decode["addr"], decode["cmd"], decode["data"])
+
+                    print "receive from serial..."
+                    receive_from_serial = self.serial.read(2)
+
+                    print receive_from_serial
+
+                    if receive_from_serial[0] is False:
+                        print TAG, "Error", receive_from_serial[1], "abandon this frame and continue..."
+                        continue
+
+                    data = receive_from_serial[1]
+                    encode = { "addr": data[0], "cmd": data[1], "data": "".join(data[2])}
+
+                    send_to_socket = json.dumps(encode)
+                    comm.send(send_to_socket)
 
                 comm.close()
-        except:
-            pass
+        except Exception, e:
+            traceback.print_exc()
+            print e
         finally:
             communication.close()
 
@@ -53,7 +71,7 @@ class SocketService(object):
 
 if __name__ == "__main__":
 
-    ss = serialService.SerialService('COM1')
+    ss = serialService.SerialService('COM3')
 
     socketService = SocketService(ss)
     socketService.communicate()
