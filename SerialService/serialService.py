@@ -53,7 +53,8 @@ class SerialService(object):
         if len(frame) is 0:
             return False, "TIMEOUT"
         else:
-            return cp.frame_check(frame)
+            # 返回原始帧内容，用以监控
+            return cp.frame_check(frame), frame
 
     @staticmethod
     def list_serial_ports():
