@@ -28,12 +28,12 @@ class SocketService(object):
                 print TAG, "accepting..."
                 comm, address = communication.accept()
                 r = comm.recv(self.datalength)
-                # ���ͻ����Ƿ���ȷ
+                # 检查客户端是否正确
                 if not r.endswith('hello comm!'):
                     print TAG, "Error", "unidentified client, close connection..."
                     comm.close()
                     continue
-                # ��ʼͨ��
+                # 开始通信
                 print TAG, "communication client, let's do it"
 
                 r = comm.recv(self.datalength)
