@@ -109,4 +109,4 @@ class SerialService(object):
 
 if __name__ == "__main__":
     serialService = SerialService('COM1')
-    print serialService.communicate(1, 2, "This is rsy!", 5)
+    print serialService.communicate(1, 1, "This is rsy!", 5)
