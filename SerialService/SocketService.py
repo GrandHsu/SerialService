@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
+''' SocketService '''
 
 import os
 import socket
+import threading
 
 import json
 import traceback
@@ -9,24 +11,22 @@ import traceback
 import serialService
 
 class SocketService(object):
-
     def __init__(self, serial):
-        
-        self.localhost  = 'localhost'
+        self.localhost = 'localhost'
         self.datalength = 1024
         self.serial = serial
-
-        pass
+        self.communication = None
+        self.monitor = None
 
     def communicate(self):
-        TAG = '[communicate]'
+        tag = '[communicate]'
         communication = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         communication.bind((self.localhost, 15051))
         communication.listen(1)
         try:
             comm = None
             while True:
-                print TAG, "accepting..."
+                print tag, "accepting..."
                 comm, address = communication.accept()
                 #receive_from_socket = comm.recv(self.datalength)
                 ## 检查客户端是否正确
@@ -35,7 +35,7 @@ class SocketService(object):
                 #    comm.close()
                 #    continue
                 ## 开始通信
-                print TAG, "communication client, let's do it"
+                print tag, "communication client, let's do it"
 
                 while True:
                     receive_from_socket = comm.recv(self.datalength)
@@ -49,11 +49,11 @@ class SocketService(object):
                     print receive_from_serial
 
                     if receive_from_serial[0] is False:
-                        print TAG, "Error", receive_from_serial[1], "abandon this frame and continue..."
+                        print tag, "Error", receive_from_serial[1], "abandon this frame & continue..."
                         continue
 
                     data = receive_from_serial[1]
-                    encode = { "addr": data[0], "cmd": data[1], "data": "".join(data[2])}
+                    encode = {"addr": data[0], "cmd": data[1], "data": "".join(data[2])}
 
                     send_to_socket = json.dumps(encode)
                     comm.send(send_to_socket)
@@ -70,8 +70,7 @@ class SocketService(object):
 
 
 if __name__ == "__main__":
-
-    ss = serialService.SerialService('COM3')
-
-    socketService = SocketService(ss)
+    serial_socket = serialService.SerialService('COM3')
+    socketService = SocketService(serial_socket)
     socketService.communicate()
+    
